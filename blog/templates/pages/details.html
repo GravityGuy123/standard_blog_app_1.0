@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 2rem;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        header {
+            background: linear-gradient(90deg, #007bff, #00c6ff);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 1rem;
+            margin-right: 1rem;
+            color: white;
+            background: linear-gradient(90deg, #007bff, #00c6ff);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            background: linear-gradient(90deg, #00c6ff, #007bff);
+            transform: translateY(-2px);
+        }
+
+        .comments-section {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .comment {
+            background: #f1f3f5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .comment strong {
+            color: #007bff;
+        }
+
+        .comment small {
+            display: block;
+            margin-top: 0.3rem;
+            color: #555;
+        }
+
+        .comment a.edit-comment {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.8rem;
+            background: #007bff;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .comment a.edit-comment:hover {
+            background: #0056b3;
+        }
+
+        form {
+            margin-top: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 0.5rem;
+            padding: 8px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Post Details</h2>
+    </header>
+
+    {% if post %}
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.content|linebreaksbr }}</p>
+        <p><strong>Author:</strong> {{ post.author }}</p>
+
+        <a href="{% url 'post_list' %}">← Back to Posts</a>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <h3>Comments</h3>
+
+            {% for comment in comments %}
+                <div class="comment">
+                    <strong>{{ comment.author.username }}</strong> said:
+                    <p>{{ comment.text }}</p>
+                    <small>Created: {{ comment.created_at }}</small>
+                    {% if comment.updated_at != comment.created_at %}
+                        <small>Updated: {{ comment.updated_at }}</small>
+                    {% endif %}
+
+                    {% if comment.author == user %}
+                        <a href="{% url 'edit_comment' comment.id %}" class="edit-comment">Edit</a>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>No comments yet. Be the first to comment!</p>
+            {% endfor %}
+
+            <!-- Add Comment Form -->
+            {% if user.is_authenticated %}
+                <h4>Add a Comment</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Post Comment</button>
+                </form>
+            {% else %}
+                <p><a href="{% url 'login' %}">Log in</a> to post a comment.</p>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Post not found.</p>
+    {% endif %}
+</body>
+</html>

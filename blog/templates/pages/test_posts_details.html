@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Details</title>
+</head>
+<body>
+    <section>
+        <div>
+            <h1>{{ post.title }}</h1>
+        </div>
+        <div>
+            <p>{{ post.content|linebreaksbr }}</p>
+        </div>
+        <div>
+            <p>{{ post.author|title }}</p>
+        </div>
+        <div>
+            <a href="{% url 'test_posts' %}">← Back to Posts</a>
+        </div>
+    </section>
+</body>
+</html>

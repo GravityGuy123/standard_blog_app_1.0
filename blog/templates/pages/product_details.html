@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+    <style>
+        .product-detail {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+        }
+
+        .product-props {
+            font-weight: bold;
+        }
+
+        .product-props span {
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-detail">
+        {% if product %}
+            <h1 class="product-props">{{ product.name }}</h1>
+            <p class="product-props">Price:
+                <span>{{ product.price }}</span> 
+            </p>
+            <p class="product-props">Description: 
+                <span>{{ product.description }}</span>
+            </p>
+            <a href="{% url 'product_list' %}">← Back to Products</a>
+        {% else %}
+            <p>Product not found</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Posts</title>
+</head>
+<body>
+    <h1>Test Post</h1>
+    {% if posts %}
+        {% for post in posts %}
+            <div>
+                <div>
+                    <h1>{{ post.title }}</h1>
+                </div>
+                <div>
+                    <p>{{ post.content|linebreaksbr }}</p>
+                </div>
+                <div>
+                    <p>{{ post.author|title }}</p>
+                </div>
+                <div><a href="{% url 'test_post_details' post.id %}">View More</a></div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No Posts Found</p>
+    {% endif %}
+
+    
+    
+    
+</body>
+</html>

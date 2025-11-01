@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> {{ title.title }} </title>
+    <style>
+        .parent {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Looping from index 1 - end -->
+     {% for post in posts %}
+        <div class="parent">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.author }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>
