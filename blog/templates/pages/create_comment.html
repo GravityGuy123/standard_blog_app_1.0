@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Comment</title>
+</head>
+<body>
+    <h2>Add a comment for: {{ post.title }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <textarea name="text" rows="4" cols="50" placeholder="Write your comment..."></textarea><br><br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

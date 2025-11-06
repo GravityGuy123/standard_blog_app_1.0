@@ -10,7 +10,7 @@
 
     {% block content %}
         <h1> {{ title }} </h1>
-        <p>Welcome {{ username }}</p>
+        <p>Welcome <strong>{{ username|title }}</strong></p>
         <p>You have {{ post_count }} posts</p>
     {% endblock content %}
 </body>
