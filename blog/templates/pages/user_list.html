@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 1rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 { text-align: center; margin-bottom: 2rem; }
+    .users-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    .user-card {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .user-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .user-card h2 { margin: 0 0 0.5rem 0; color: #007BFF; }
+    .user-card p { margin: 0.25rem 0; color: #555; }
+    .user-card a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      background-color: #007BFF;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 0.9rem;
+    }
+    .user-card a:hover { background-color: #0056b3; }
+    .empty-message { text-align: center; margin-top: 2rem; font-style: italic; color: #777; }
+  </style>
+</head>
+<body>
+  <h1>All Users</h1>
+
+  {% if users %}
+  <div class="users-container">
+    {% for user in users %}
+      <div class="user-card">
+        <h2>{{ user.username | title }}</h2>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>First Name:</strong> {{ user.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+        <a href="{% url 'update_user_email' user.id %}">Update Email</a>
+        <a href="{% url 'update_username' user.id %}">Change Username</a>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="empty-message">No users found.</p>
+  {% endif %}
+</body>
+</html>

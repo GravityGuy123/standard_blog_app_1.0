@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week Ago Posts</title>
+    <style>
+        *{
+            /* margin: 0; */
+            /* padding: 0; */
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fa;
+            color: #007bff;
+            display: flex;
+            flex-flow: row wrap;
+            column-gap: 2rem;
+            row-gap: 1rem;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 1rem;
+            display: flex;
+            flex-flow: column;
+            flex-grow: 1;
+        }
+
+        .container:hover {
+            box-shadow: 2px 2px 5px;
+        }
+
+        div p {
+            color: #333;
+        }
+
+        .no_post_group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            margin: auto;
+        }
+
+
+        button, a {
+            padding: 0.5rem 1rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .create_post_div {
+            margin-top: 20rem;
+        }
+
+        button:hover, a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    {% if posts %}
+        {% for post in posts %}
+        <div class="container">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+            <p>{{ post.author | title }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <section class="no_post_group">
+            <div>
+                <h1>No Posts Found😪</h2>
+            </div>
+            <div class="create_post_div">
+                <a href="{% url 'create_post2' %}">Create Posts</a>
+            </div>
+        </section>
+    {% endif %}
+</body>
+</html>

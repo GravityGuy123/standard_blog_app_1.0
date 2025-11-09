@@ -1,219 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Posts Page</title>
     <style>
-        /* Reset & box-sizing */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+      /* Reset & box-sizing */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        html, body {
-            height: 100%;
-        }
+      html,
+      body {
+        height: 100%;
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+      }
 
-        /* Header with gradient and subtle shadow */
-        header {
-            background: linear-gradient(90deg, #007bff, #00c6ff);
-            color: white;
-            padding: 1rem 2rem;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+      /* Header with gradient and subtle shadow */
+      header {
+        background: linear-gradient(90deg, #007bff, #00c6ff);
+        color: white;
+        padding: 1rem 2rem;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        main {
-            flex: 1;
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            width: 100%;
-        }
+      main {
+        flex: 1;
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        width: 100%;
+      }
 
+      .post_results {
+          margin-bottom: 2rem;
+          text-align: center;
+        }
+        
         h1 {
-            text-align: center;
             color: #007bff;
-            margin-bottom: 2rem;
-        }
-
-        /* Post Card */
-        .post-card {
-            background-color: #fcfcfc;
-            border-left: 5px solid #007bff; /* subtle accent border */
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
-        }
-
-        /* Catchy post title */
-        .post-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.7rem;
-            background: linear-gradient(90deg, #007bff, #00c6ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.08);
-            transition: all 0.2s ease;
-        }
-
-        .post-title:hover {
-            transform: scale(1.02);
-        }
-
-        /* Post content */
-        .post-content {
-            font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        /* Post author */
-        .post-author {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #007bff;
-            text-align: right;
-            font-style: italic;
-            transition: color 0.2s ease;
-        }
-
-        .post-author:hover {
-            color: #00c6ff;
-        }
-
-        /* Header navigation buttons */
-        .nav-icons {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        .nav-icons a {
-            color: #fff;
-            /* color: #007bff; */
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .nav-icons a:hover {
-            background: linear-gradient(90deg, #00c6ff, #007bff);
-            color: white;
-            border-color: transparent;
-            transform: translateY(-2px);
-        }
-
-        /* Footer with gradient and subtle shadow */
-        footer {
-            background: linear-gradient(90deg, #0056b3, #0096ff);
-            color: white;
-            padding: 1rem 2rem;
-            text-align: center;
-            box-shadow: 0 -4px 8px rgba(0,0,0,0.1);
-        }
-
-        /* Footer nav as text links with hover underline effect */
-        footer .footer-nav {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem;
             margin-bottom: 0.5rem;
-        }
+    } 
 
-        footer .footer-nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
+      /* Post Card */
+      .post-card {
+        background-color: #fcfcfc;
+        border-left: 5px solid #007bff; /* subtle accent border */
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
 
-        footer .footer-nav a:hover {
-            text-decoration: underline;
-            color: #ffeb3b; /* subtle accent on hover */
-        }
+      .post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+      }
 
+      /* Catchy post title */
+      .post-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.7rem;
+        background: linear-gradient(90deg, #007bff, #00c6ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.08);
+        transition: all 0.2s ease;
+      }
+
+      .post-title:hover {
+        transform: scale(1.02);
+      }
+
+      /* Post content */
+      .post-content {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 1rem;
+        color: #333;
+      }
+
+      /* Post author */
+      .post-author {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #007bff;
+        text-align: right;
+        font-style: italic;
+        transition: color 0.2s ease;
+      }
+
+      .post-author:hover {
+        color: #00c6ff;
+      }
+
+      /* Header navigation buttons */
+      .nav-icons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      .nav-icons a {
+        color: #fff;
+        /* color: #007bff; */
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .nav-icons a:hover {
+        background: linear-gradient(90deg, #00c6ff, #007bff);
+        color: white;
+        border-color: transparent;
+        transform: translateY(-2px);
+      }
+
+      /* Footer with gradient and subtle shadow */
+      footer {
+        background: linear-gradient(90deg, #0056b3, #0096ff);
+        color: white;
+        padding: 1rem 2rem;
+        text-align: center;
+        box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Footer nav as text links with hover underline effect */
+      footer .footer-nav {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      footer .footer-nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      footer .footer-nav a:hover {
+        text-decoration: underline;
+        color: #ffeb3b; /* subtle accent on hover */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Header -->
     <header>
-        <h2>My Blog Posts</h2>
-        <div class="nav-icons">
-            <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'profile' %}">Profile</a>
-            <a href="{% url 'post' %}">Posts</a>
-            <a href="{% url 'test' %}">Test</a>
-            <a href="{% url 'admin:index' %}">Admin</a>
-            <a href="{% url 'create_post' %}">Create Post</a>
-        </div>
+      <h2>My Blog Posts</h2>
+      <div class="nav-icons">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'post' %}">Posts</a>
+        <a href="{% url 'test' %}">Test</a>
+        <a href="{% url 'admin:index' %}">Admin</a>
+        <a href="{% url 'create_post' %}">Create Post</a>
+      </div>
     </header>
 
     <!-- Main content -->
     <main>
-        {% block content %}
-            <h1>Posts</h1>
-            {% if posts %}
-                {% for post in posts %}
-                    <div class="post-card">
-                        <div class="post-title">
-                            {{ post.title }}
-                        </div>
-                        <div class="post-content">
-                            {{ post.content|linebreaksbr }}
-                        </div>
-                        <div class="post-author">
-                            By {{ post.author|title }}
-                        </div>
-                        <div class="post-details">
-                            <a href="{% url 'details' post.id %}">View Details</a>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>No posts available.</p>
-            {% endif %}
-        {% endblock content %}
+        <div class="post_results">
+          <h1>Posts</h1>
+          {% if total == 0 %}
+            <p>No Post Yet😥</p>
+          
+          {% elif total == 1 %}
+            <p>{{ total }} Post Found</p>
+    
+          {% else %}
+            <p>{{ total }} Posts Found</p>
+          {% endif %}
+      </div>
+
+      {% if posts %}
+        {% for post in posts %}
+        <div class="post-card">
+            <div class="post-title">{{ post.title }}</div>
+            <div class="post-content">{{ post.content|linebreaksbr }}</div>
+            <div class="post-author">By {{ post.author|title }}</div>
+            <div class="post-details">
+            <a href="{% url 'details' post.id %}">View Details</a>
+            </div>
+        </div>
+        {% endfor %}
+      
+      {% else %}
+        <p>No posts available.</p>
+      {% endif %}
     </main>
 
     <!-- Footer -->
     <footer>
-        <div class="footer-nav">
-            <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'profile' %}">Profile</a>
-            <a href="{% url 'post' %}">Posts</a>
-            <a href="{% url 'test' %}">Test</a>
-            <a href="{% url 'admin:index' %}">Admin</a>
-        </div>
-        &copy; 2025 My Website
+      <div class="footer-nav">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'post' %}">Posts</a>
+        <a href="{% url 'test' %}">Test</a>
+        <a href="{% url 'admin:index' %}">Admin</a>
+      </div>
+      &copy; 2025 My Website
     </footer>
-</body>
+  </body>
 </html>

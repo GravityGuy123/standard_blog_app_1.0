@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Results</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* General Layout */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 2rem;
+        background-color: #f3f6fa;
+        color: #333;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .search_results {
+        box-sizing: border-box;
+        margin: 0%;
+        padding: 0%;
+        margin-bottom: 1rem;
+      }
+
+      h2 {
+        color: #007bff;
+        text-align: center;
+      }
+
+      p {
+        /* margin-bottom: 1rem; */
+        text-align: center;
+      }
+
+      /* Search Form */
+      form {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+        gap: 0.5rem;
+      }
+
+      input[type="text"] {
+        padding: 0.6rem 1rem;
+        width: 300px;
+        border: 1px solid #ccc;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+      }
+
+      input[type="text"]:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        outline: none;
+      }
+
+      button {
+        padding: 0.6rem 1.5rem;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+      }
+
+      /* Results List */
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        background-color: #fff;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      li:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
+
+      a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.05rem;
+      }
+
+      a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+      }
+
+      .author {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      /* No Results */
+      .empty-message {
+        text-align: center;
+        font-style: italic;
+        color: #777;
+        margin-top: 2rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <form method="get">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search posts..."
+          value="{{ query }}"
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      <div class="search_results">
+        <h2>Search Results</h2>
+          
+        {% if posts %}
+            {% if total_posts == 0 %}
+                <p class="empty-message">No results found.</p>
+            
+            {% elif total_posts == 1 %}
+                <p>{{ total_posts }} Post Found</p>
+
+            {% else %}
+                <p>{{ total_posts }} Posts Found</p>
+        {% endif %}
+      </div>
+
+      <ul>
+        {% for post in posts %}
+        <li>
+          <a href="{% url 'details' post.id %}">{{ post.title }}</a>
+          <span class="author">by {{ post.author.username|title }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+
+      {% else %}
+      <p class="empty-message">No results found.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

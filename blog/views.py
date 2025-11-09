@@ -2,8 +2,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import Post, Comment
 from django.contrib.auth.models import User
-from .forms import PostForm, PostForm2, CommentForm
+from .models import UserProfile
+from .forms import PostForm, PostForm2, CommentForm, UserRegistrationForm
 from django.core.exceptions import ValidationError
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from .forms import UserProfileForm
+from django.contrib import messages
+from datetime import datetime, timedelta
+from django.db.models import Q
 
 # Create your views here.
 def hello_world(response):
@@ -154,7 +161,8 @@ def post_list(request):
     """
 
     posts = Post.objects.all() # Get all posts from database
-    context = {'posts': posts}
+    total = posts.count()
+    context = {'posts': posts, 'total': total}
     return render(request, 'pages/post_list.html', context)
 
 
@@ -564,3 +572,196 @@ def edit_comment(request, comment_id):
         })
 
 
+
+# ----- Register User -----
+def register_user(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+
+        if form.is_valid():
+            # Create the user
+            user = form.save()
+
+            # Create user profile automatically
+            UserProfile.objects.create(user=user)
+
+            # Log the user in
+            login(request, user)
+
+            return redirect('post_list')
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'pages/register.html', {'form': form})
+
+
+@login_required
+def profile_view(request, username):
+    # Get the user whose profile is being viewed
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(UserProfile, user=user)
+
+    # Fetch posts authored by this user
+    posts = Post.objects.filter(author=user)
+
+    # Only allow profile owner to edit their profile
+    if request.user == user:
+        if request.method == 'POST':
+            form = UserProfileForm(request.POST, request.FILES, instance=profile)
+            if form.is_valid():
+                form.save()
+                return redirect('profile', username=request.user.username)
+        else:
+            form = UserProfileForm(instance=profile)
+    else:
+        # If not the owner, show a read-only form
+        form = None
+
+    context = {
+        'form': form,
+        'profile': profile,
+        'posts': posts,
+        'profile_user': user,
+    }
+
+    return render(request, 'pages/userprofile.html', context)
+
+
+# def posts_by_author(request, author_name):
+#     """
+#     Get and display posts by author
+#     """
+
+#     # Get all posts by a specific author
+#     # posts = Post.objects.filter(author=author_name)
+#     posts = Post.objects.filter(author__username=author_name)
+#     context = {'posts': posts, 'author': author_name}
+    
+#     return render(request, 'pages/author_posts.html', context)
+
+
+def posts_by_author(request):
+    """
+    Display all posts, and allow search by author using a query parameter.
+    Example URL: /posts/?author=john
+    """
+
+    author_name = request.GET.get('author')  # Get author from query string, e.g., ?author=john
+
+    if author_name:
+        # Filter posts by author's username
+        posts = Post.objects.filter(author__username__icontains=author_name)
+    else:
+        # Show all posts if no author is provided
+        posts = Post.objects.all()
+
+    context = {
+        'posts': posts,
+        'author': author_name or ''
+    }
+    return render(request, 'pages/author_posts.html', context)
+
+
+def posts_except_admin(request):
+    """
+    Display all posts except ones made by admin
+    """
+
+    posts = Post.objects.exclude(author__username__iexact='admin')
+    context = {'posts': posts}
+
+    return render(request, 'pages/except_admin_posts.html', context)
+
+
+def user_list(request):
+    """
+    Display all existing users
+    """
+
+    users = User.objects.all()
+    context = {'users': users}
+
+    return render(request, 'pages/user_list.html', context)
+
+
+def update_user_email(request, user_id):
+    """
+    Update email for a specific user
+    """
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "POST":
+        new_email = request.POST.get("email")
+        if new_email:
+            user.email = new_email
+            user.save()
+            messages.success(request, f"Email for {user.username} updated successfully!")
+            return redirect('users_list')
+        else:
+            messages.error(request, "Please provide a valid email.")
+    
+    context = {'user': user}
+    return render(request, 'pages/update_email.html', context)
+
+
+
+def update_username(request, user_id):
+    """
+    Update username for a specific user
+    """
+
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "POST":
+        new_username = request.POST.get("username")
+        if new_username:
+            user.username = new_username
+            user.save()
+            messages.success(request, f'Username for {user.username} updated successfully')
+        else:
+            messages.error(request, "Please provide a valid username")
+
+    context = {'user': user}
+    return render(request, 'pages/update_username.html', context)
+
+
+def last_7_days_posts(request):
+    """
+    Display posts from the last 7 days
+    """
+
+    # week_ago = datetime.now() - timedelta(minutes=7)
+    # week_ago = datetime.now() - timedelta(hours=1)
+
+    week_ago = datetime.now() - timedelta(days=7)
+    posts = Post.objects.filter(created_at__gte=week_ago)
+    context = {'posts': posts}
+
+    return render(request, 'pages/last_7_days_posts.html', context)
+
+
+def advanced_search(request):
+    """
+    Display all posts and a search field for querying title, content, and author.
+    """
+    query = request.GET.get('q', '').strip()  # Extract the search term
+    
+    if query:
+        # If user entered something, search for matching posts
+        posts = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(author__username__icontains=query)
+        ).distinct()
+
+    else:
+        # Otherwise, show all posts
+        posts = Post.objects.all()
+    
+    total_posts = posts.count()
+
+    return render(
+        request, 'pages/search_results.html',
+        {'posts': posts, 'query': query, 'total_posts': total_posts}
+        )
+
+# NB: In Python, variables defined inside an if or else block are not limited to that block (unlike in some other languages like JavaScript or C++). They live in the function’s scope — as long as they’re defined before the function ends, you can use them anywhere below that point. That's why we are able to access the variable "posts"

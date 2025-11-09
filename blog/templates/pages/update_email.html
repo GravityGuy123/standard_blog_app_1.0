@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Email</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 2rem; background-color: #f9f9f9; }
+    h1 { text-align: center; margin-bottom: 2rem; }
+    form { max-width: 400px; margin: auto; display: flex; flex-direction: column; gap: 0.8rem; }
+    input { padding: 0.6rem; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 0.6rem; border: none; background-color: #007BFF; color: #fff; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    .messages { text-align: center; margin-top: 1rem; color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>Update Email for {{ user.username }}</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    <input type="email" name="email" placeholder="Enter new email" value="{{ user.email }}" required>
+    <button type="submit">Update</button>
+  </form>
+
+  {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register User</title>
+    <style>
+      :root {
+        --primary: #007bff;
+        --primary-dark: #0056b3;
+        --bg-gradient: linear-gradient(135deg, #e3f2fd, #f8f9fa);
+        --card-bg: #ffffff;
+        --text: #333333;
+        --radius: 10px;
+        --shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        --input-border: #d9d9d9;
+        --error-bg: #ffeaea;
+        --error-border: #ffb3b3;
+        --error-text: #b10000;
+        --success-bg: #e6ffed;
+        --success-border: #b6e6b6;
+        --success-text: #006600;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        min-height: 100vh;
+      }
+
+      .container {
+        background: var(--card-bg);
+        width: 100%;
+        max-width: 700px;
+        padding: 2.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        animation: fadeIn 0.6s ease-in-out;
+        transition: transform 0.3s ease;
+      }
+
+      .container:hover {
+        transform: translateY(-3px);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 2rem;
+        font-weight: 700;
+        font-size: 1.8rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        color: #222;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      textarea {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border: 1px solid var(--input-border);
+        border-radius: var(--radius);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: #fdfdfd;
+      }
+
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.35);
+        background-color: #fff;
+      }
+
+      .alert {
+        border-radius: var(--radius);
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+      }
+
+      .alert.error {
+        background: var(--error-bg);
+        color: var(--error-text);
+        border: 1px solid var(--error-border);
+      }
+
+      .alert.success {
+        background: var(--success-bg);
+        color: var(--success-text);
+        border: 1px solid var(--success-border);
+      }
+
+      .error-div {
+        background: var(--error-bg);
+        color: var(--error-text);
+        border: 1px solid var(--error-border);
+        border-radius: var(--radius);
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.8rem;
+        font-size: 0.95rem;
+      }
+
+      .errorlist {
+        list-style: none;
+        margin-top: 0.5rem;
+      }
+
+      small {
+        display: block;
+        margin-top: 0.4rem;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      button {
+        background-color: var(--primary);
+        color: #fff;
+        padding: 0.9rem 1.5rem;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 8px rgba(0, 123, 255, 0.3);
+      }
+
+      button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+      }
+
+      .form-actions {
+        text-align: center;
+        margin-top: 1.8rem;
+      }
+
+      a.cancel {
+        display: inline-block;
+        margin-left: 1rem;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      a.cancel:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 1.5rem;
+        }
+
+        button {
+          width: 100%;
+        }
+
+        .form-actions a.cancel {
+          display: block;
+          margin-top: 0.8rem;
+          text-align: center;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Register New User</h1>
+
+      <!-- ✅ Display success/error messages -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- ✅ Display form validation errors -->
+      {% if form.errors %}
+        <div class="error-div">
+          <strong>Please correct the errors below:</strong>
+          <ul class="errorlist">
+            {% for field in form %}
+              {% for error in field.errors %}
+                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+        </div>
+
+        <div class="form-group">
+          {{ form.email.label_tag }}
+          {{ form.email }}
+        </div>
+
+        <div class="form-group">
+          {{ form.password1.label_tag }}
+          {{ form.password1 }}
+        </div>
+
+        <div class="form-group">
+          {{ form.password2.label_tag }}
+          {{ form.password2 }}
+        </div>
+
+        <div class="form-actions">
+          <button type="submit">Register</button>
+          <a href="{% url 'post_list' %}" class="cancel">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
