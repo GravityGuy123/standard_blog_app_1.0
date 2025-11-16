@@ -5,12 +5,13 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 from .forms import PostForm, PostForm2, CommentForm, UserRegistrationForm
 from django.core.exceptions import ValidationError
-from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .forms import UserProfileForm
 from django.contrib import messages
 from datetime import datetime, timedelta
 from django.db.models import Q
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import make_password, check_password
 
 # Create your views here.
 def hello_world(response):
@@ -21,19 +22,30 @@ def hello_world(response):
     return HttpResponse('Hello World')
 
 
+@login_required()
 def home(request):
     """
     Renders the Home Page Template
     """
+    user = request.user  # currently logged-in user
 
+    posts = Post.objects.filter(author__username__iexact=user.username)
+
+    # Count posts authored by this user
+    # post_count = Post.objects.filter(author__username__iexact=user.username).count()
+    post_count = posts.count()
+    
     context = {
-        'title': 'My Awesome Blog',
-        'username': 'gravity',
-        'post_count': 15
+        'user': user,
+        'posts': posts,
+        'post_count': post_count, 
     }
+    
     return render(request, 'pages/home.html', context)
+
     
 
+@login_required(login_url="login")
 def post_page(request):
     """
     Renders the post page
@@ -53,6 +65,7 @@ def post_page(request):
     return render(request, 'pages/post.html', contexts)
 
 
+@login_required(login_url="login")
 def profile(request):
     """
     Renders the Profile Page
@@ -71,6 +84,7 @@ def profile(request):
 
 
 
+@login_required(login_url="login")
 def props_page(request):
     """
     Displaying the Props
@@ -87,6 +101,7 @@ def props_page(request):
 
 
 
+@login_required(login_url="login")
 def test2(request):
     contexts = {
         'title': {'page_title': '2nd Test Page'},
@@ -101,6 +116,7 @@ def test2(request):
     return render(request, 'pages/test2.html', contexts)
 
 
+@login_required(login_url="login")
 def user_profile(request, username):
     """
     Username parameter comes from the URL 
@@ -112,6 +128,7 @@ def user_profile(request, username):
     return render(request, 'pages/user_profile.html',context)
 
 
+@login_required(login_url="login")
 def post_detail(request, post_id):
     """
     post_id parameter comes from the URL
@@ -124,6 +141,7 @@ def post_detail(request, post_id):
     # return render(request, 'pages/post_details.html', {'context': context})
 
 
+@login_required(login_url="login")
 def product_list(request):
     """
     Render a list of Products
@@ -139,6 +157,7 @@ def product_list(request):
     return render(request, 'pages/product_list.html', context)
 
 
+@login_required(login_url="login")
 def product_details(request, product_id):
     """
     Render a list of Products
@@ -155,6 +174,7 @@ def product_details(request, product_id):
     return render(request, 'pages/product_details.html', context)
 
 
+@login_required(login_url="login")
 def post_list(request):
     """
     Displays all blog posts
@@ -166,6 +186,7 @@ def post_list(request):
     return render(request, 'pages/post_list.html', context)
 
 
+@login_required(login_url="login")
 def details(request, post_id):
     """
     Display a single post
@@ -198,6 +219,7 @@ def details(request, post_id):
     return render(request, 'pages/details.html', context)
 
 
+@login_required(login_url="login")
 def test_posts(request):
     """
     Display all test posts
@@ -209,6 +231,7 @@ def test_posts(request):
     return render(request, 'pages/test_posts.html', context)
 
 
+@login_required(login_url="login")
 def test_post_details(request, post_id):
     """
     Displays a specific test post
@@ -443,6 +466,7 @@ def create_with_save5(request):
 
 
 # 3a. Using Django Forms
+@login_required
 def create_post_with_form(request):
     """
     Create a post using Django forms
@@ -475,6 +499,7 @@ def create_post_with_form(request):
 
 
 # 3b.
+@login_required
 def create_post_with_form2(request):
     """
     This form automatically creates form fields based on the Post model and handle both GET (show form) and POST (process form) requests.
@@ -507,6 +532,7 @@ def create_post_with_form2(request):
     return render(request, 'pages/create_post2.html', {'form': form})
 
 
+@login_required
 def comment(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     comments = post.comments.all() # Fetch all comments
@@ -526,6 +552,7 @@ def comment(request, post_id):
     return render(request, 'pages/post_comment.html', context)
 
 
+@login_required(login_url="login")
 def create_comment(request, post_id):
     """
     Create a Comment object linked to a Post and a User using the .create() method
@@ -551,6 +578,7 @@ def create_comment(request, post_id):
 
 
 
+@login_required(login_url="login")
 def edit_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
@@ -683,6 +711,7 @@ def user_list(request):
     return render(request, 'pages/user_list.html', context)
 
 
+@login_required
 def update_user_email(request, user_id):
     """
     Update email for a specific user
@@ -703,7 +732,7 @@ def update_user_email(request, user_id):
     return render(request, 'pages/update_email.html', context)
 
 
-
+@login_required
 def update_username(request, user_id):
     """
     Update username for a specific user
@@ -765,3 +794,312 @@ def advanced_search(request):
         )
 
 # NB: In Python, variables defined inside an if or else block are not limited to that block (unlike in some other languages like JavaScript or C++). They live in the function’s scope — as long as they’re defined before the function ends, you can use them anywhere below that point. That's why we are able to access the variable "posts"
+
+
+def simple_update(request):
+    """
+    Fetch a post with .get() and update it's title and content
+    """
+
+    # step 1: Get post with ID 32 
+    post = Post.objects.get(id=32)
+
+    # step 2: Modify the fields
+    post.title = "My Updated Title"
+    post.content = "This is the new content!"
+
+    # step 2: Modify the fields
+    post.save()
+
+    return HttpResponse(f'Post with title {post.title} saved successfully.')
+
+
+def simple_update2(request):
+    """
+    Fetch a post with .get() and update it's title and content
+    """
+
+    post = Post.objects.get(id=10)
+    post.title = "Learning Django"
+    post.content = "Am currently learning django web framework"
+
+    post.save()
+
+    return HttpResponse(f"Post with title {post.title} updated successfully.")
+
+
+def simple_update3(request):
+    """
+    Fetch a post with .filter() and update it's title and content
+    """
+
+    post = Post.objects.filter(id=9).update(
+        title = 'Updating posts with .filter method'.title(),
+        content = "Am updating posts with .filter() method and it's so cool." 
+    )
+    # post.save()
+
+    if post:
+        return HttpResponse("Post with ID 9 updated successfully.")
+    else:
+        return HttpResponse("No post found with ID 9.")
+    
+# NB: The .update() method in Django does not return a model instance — it returns an integer representing the number of records updated. Therefore operations that involves data injections such as 
+# return HttpResponse(f"Post with title {post.title} updated successfully.")
+# will not work
+
+
+@login_required
+def edit_post(request, post_id):
+    """
+    Edit and update a post from django form
+    """
+
+    # Step 1: Get the post you want to edit
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.author != request.user:
+        messages.error(request, "You don't have permission to delete this post")
+        return redirect('details', post_id=post_id)
+
+    # Step 2: Check if user submitted the form
+    if request.method == 'POST':
+        # User clicked save button
+        form = PostForm(request.POST, instance=post)
+
+        if form.is_valid():
+            # Step 3: Save the updated post
+            form.save()
+            messages.success(request, 'Post updated successfully!')
+
+            # Step 4: Redirect to success page
+            return redirect('details', post_id=post.id)
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        # User just opened the edit page
+        form = PostForm(instance=post)
+
+    # Step 5: Show the edit form
+    return render(request, 'pages/edit_post.html', {
+        'post': post,
+        'form': form,
+        'erros': form.errors,
+    })
+
+
+def login_view(request):
+    """
+    Handle user login with deactivated account check
+    """
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        try:
+            # Get user by username
+            user = User.objects.get(username=username)
+
+            # Get user profile
+            profile = user.user_profile
+
+            # Check if user is deactivated
+            if profile.is_deactivated:
+                messages.error(request, "Your account is deactivated. Please reactivate first.")
+                return redirect("reactivate_account")
+
+            # Verify password manually (for inactive/deactivated users)
+            if not user.check_password(password):
+                messages.error(request, "Invalid username or password.", extra_tags="login_error")
+                return redirect("login")
+
+            # Successful login
+            login(request, user)
+            messages.success(request, f"Welcome back, {user.username}!")
+            return redirect("home")
+
+        except User.DoesNotExist:
+            messages.error(request, "Invalid username or password.", extra_tags="login_error")
+            return redirect("login")
+        except UserProfile.DoesNotExist:
+            messages.error(request, "User profile not found.", extra_tags="login_error")
+            return redirect("login")
+
+    return render(request, "pages/login.html")
+
+
+def logout_view(request):
+    """
+    Handle user logout
+    """
+    logout(request)
+    messages.info(request, "You’ve been logged out successfully.", extra_tags="logout")
+    return redirect("login")
+
+
+
+def hard_delete1(request, post_id):
+    """
+    Delete a post with confirmation
+    """
+
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.author != request.user and not request.user.is_superuser:
+        messages.error(request, "You don't have permission to delete this post")
+        return redirect('details', post_id=post_id)
+
+    if request.method == 'POST':
+        post_title = post.title
+        comment_count = post.comments.count()
+
+        post.delete()
+
+        messages.success(
+            request,
+            f'Post "{post_title}" and its {comment_count} comment(s) have been deleted.'
+        )
+        return redirect('post_list')
+
+    # GET request — count comments safely
+    comment_count = post.comments.count()
+
+    return render(request, 'pages/post_confirm_delete.html', {
+        'post': post,
+        'comment_count': post.comments.count(),
+    })
+
+
+
+def forgot_password(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+
+        # Check if user exists
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            messages.error(request, "No account found with that username.")
+            return redirect("forgot_password")
+
+        # Redirect to reset form with ID
+        return redirect("reset_password", user_id=user.id)
+
+    return render(request, "pages/forgot_password.html")
+
+
+def reset_password(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "POST":
+        new_password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect("reset_password", user_id=user.id)
+
+        # Update password securely
+        user.password = make_password(new_password)
+        user.save()
+
+        messages.success(request, "Password reset successful. You can now log in.")
+        return redirect("login")
+
+    return render(request, "pages/reset_password.html", {"user": user})
+
+
+@login_required(login_url="login")
+def profile2(request):
+    """Display user profile"""
+
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    return render(request, 'pages/profile2.html', {'profile': profile})
+
+
+# -------------------------------------------------------
+# DEACTIVATE ACCOUNT
+# -------------------------------------------------------
+@login_required(login_url="login")
+def deactivate_account(request, user_id=None):
+    """
+    Deactivate a user account (soft delete).
+    - Normal users can deactivate only their own account.
+    - Superusers can deactivate any account by passing user_id.
+    """
+    # Determine which user to deactivate
+    if request.user.is_superuser and user_id:
+        try:
+            target_user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+            return redirect('home')
+    else:
+        target_user = request.user  # normal user can only deactivate self
+
+    profile, created = UserProfile.objects.get_or_create(user=target_user)
+
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        reason = request.POST.get('reason', '')
+
+        # Normal users must provide their own password
+        if not request.user.is_superuser:
+            if not target_user.check_password(password):
+                messages.error(request, 'Incorrect password.')
+                return render(request, 'pages/deactivate_account.html', {'target_user': target_user})
+
+        # Deactivate account
+        profile.deactivate(reason=reason)
+
+        # Log out if the superuser is not deactivating someone else
+        if request.user == target_user:
+            logout(request)
+
+        messages.success(request, f'Account "{target_user.username}" has been deactivated.')
+        return redirect('home')
+
+    return render(request, 'pages/deactivate_account.html', {'target_user': target_user})
+
+
+# -------------------------------------------------------
+# REACTIVATE ACCOUNT
+# -------------------------------------------------------
+def reactivate_account(request):
+    """Reactivate a deactivated account"""
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        try:
+            # Get user by username
+            user = User.objects.get(username=username)
+
+            # Manually check the password for deactivated users
+            if not check_password(password, user.password):
+                messages.error(request, 'Invalid username or password.')
+                return render(request, 'pages/reactivate_account.html')
+
+            # Get user profile
+            profile = UserProfile.objects.get(user=user)
+
+            if profile.is_deactivated:
+                profile.reactivate()
+
+                # Clear old session to avoid login issues
+                logout(request)
+
+                messages.success(request, 'Your account has been reactivated. Please log in.')
+                return redirect('login')
+            else:
+                messages.info(request, 'This account is already active.')
+                return redirect('login')
+
+        except User.DoesNotExist:
+            messages.error(request, 'Invalid username or password.')
+
+        except UserProfile.DoesNotExist:
+            messages.error(request, 'Account not found.')
+
+    return render(request, 'pages/reactivate_account.html')

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post - {{ post.title|truncatewords:10 }}</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 2rem;
+            line-height: 1.6;
+        }
+
+        form {
+            max-width: 600px;
+            margin-top: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .title-input {
+            height: 2rem;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #555;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 1rem;
+        }
+
+        .error {
+            color: #721c24;
+            background: #f8d7da;
+            padding: 10px;
+            border-left: 4px solid #dc3545;
+            margin-bottom: 1rem;
+        } */
+    </style>
+</head>
+<body>
+    <h2>Edit Post</h2>
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        <div>
+            <label for="title">Title</label>
+            <input class="title-input" 
+                type="text" 
+                name="title" 
+                id="title" 
+                value="{{ post.title }}" 
+                required
+            >
+        </div>
+
+        <div>
+            <label for="content">Content</label>
+            <textarea 
+                name="content" 
+                id="content" 
+                rows="8" 
+                required
+            >{{ post.content }}</textarea>
+        </div>
+
+        <button type="submit">Save Changes</button>
+        <a href="{% url 'details' post.id %}">Cancel</a>
+    </form>
+</body>
+</html>

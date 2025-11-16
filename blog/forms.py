@@ -26,6 +26,39 @@ class PostForm(forms.ModelForm):
             }),
         }
 
+    def clean_title(self):
+        """
+        Custom validation for the title field.
+        """
+        title = self.cleaned_data.get('title')
+
+        # Rule 1: Minimum and Maximum Length
+        if len(title) < 5:
+            raise ValidationError("Title must be at least 5 characters long.")
+        if len(title) > 200:
+            raise ValidationError("Title cannot exceed 200 characters.")
+        
+        # Rule 2: Prohibited Words
+        banned_words = ['spam', 'advertisement', 'clickbait', 'fake']
+
+        for word in banned_words:
+            if word in title.lower():
+                raise ValidationError(f"The title contains a prohibited word: '{word}'")
+        
+        return title
+    
+    def clean_content(self):
+        """
+        Custom validation for the content field.
+        """
+        content = self.cleaned_data.get('content')
+
+        # Rule 1: Minimum Length
+        if len(content) < 20:
+            raise ValidationError("Content must be at least 20 characters long.")
+        
+        return content
+
 
 # ----- Post Form2 -----
 class PostForm2(forms.ModelForm):
@@ -64,6 +97,40 @@ class PostForm2(forms.ModelForm):
             'title': 'Choose a descriptive title (max 200 characters)',
             'content': 'Write your post content using plain text or markdown',
         }
+
+    def clean_title(self):
+        """
+        Custom validation for the title field.
+        """
+        title = self.cleaned_data.get('title')
+
+        # Rule 1: Minimum and Maximum Length
+        if len(title) < 5:
+            raise ValidationError("Title must be at least 5 characters long.")
+        if len(title) > 200:
+            raise ValidationError("Title cannot exceed 200 characters.")
+        
+        # Rule 2: Prohibited Words
+        banned_words = ['spam', 'advertisement', 'clickbait', 'fake']
+
+        for word in banned_words:
+            if word in title.lower():
+                raise ValidationError(f"The title contains a prohibited word: '{word}'")
+        
+        return title
+    
+    def clean_content(self):
+        """
+        Custom validation for the content field.
+        """
+        content = self.cleaned_data.get('content')
+
+        # Rule 1: Minimum Length
+        if len(content) < 20:
+            raise ValidationError("Content must be at least 20 characters long.")
+        
+        return content
+    
 
 # ----- Comment Form -----
 class CommentForm(forms.ModelForm):

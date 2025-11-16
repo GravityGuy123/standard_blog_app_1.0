@@ -107,7 +107,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+# TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Lagos"
 
 USE_I18N = True
 
@@ -128,3 +129,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Authentication redirects
 LOGIN_REDIRECT_URL = 'profile'  # After login, send user to their profile
 LOGOUT_REDIRECT_URL = 'login'   # After logout, send user back to login page
+# LOGIN_URL = '/login/'           # Redirect unauthenticated users to this URL

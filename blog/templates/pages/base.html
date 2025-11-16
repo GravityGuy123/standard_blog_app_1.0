@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Base - Responsive Header</title>
+  <title>{{ user.username }}</title>
   <style>
     /* Reset */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -140,6 +140,7 @@
         <li><a href="{% url 'product_list' %}">Product List</a></li>
         <li><a href="{% url 'admin:index' %}">Admin</a></li>
         <li><a href="{% url 'create_post' %}">Create Post</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
       </ul>
     </nav>
     <div class="hamburger" id="hamburger">

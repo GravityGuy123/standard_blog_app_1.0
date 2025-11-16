@@ -42,6 +42,17 @@
         width: 100%;
       }
 
+      .edit_details_links {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .edit_details_links a:hover {
+        /* color: #00c6ff */
+        text-decoration: underline;
+      }
+
       .post_results {
           margin-bottom: 2rem;
           text-align: center;
@@ -165,9 +176,33 @@
         text-decoration: underline;
         color: #ffeb3b; /* subtle accent on hover */
       }
+
+      .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 1rem;
+        }
+
+        .error {
+            color: #721c24;
+            background: #f8d7da;
+            padding: 10px;
+            border-left: 4px solid #dc3545;
+            margin-bottom: 1rem;
+        }
     </style>
   </head>
   <body>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{{ message.tags }}">
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
     <!-- Header -->
     <header>
       <h2>My Blog Posts</h2>
@@ -178,6 +213,7 @@
         <a href="{% url 'test' %}">Test</a>
         <a href="{% url 'admin:index' %}">Admin</a>
         <a href="{% url 'create_post' %}">Create Post</a>
+        <a href="{% url 'logout' %}">Logout</a>
       </div>
     </header>
 
@@ -203,7 +239,11 @@
             <div class="post-content">{{ post.content|linebreaksbr }}</div>
             <div class="post-author">By {{ post.author|title }}</div>
             <div class="post-details">
-            <a href="{% url 'details' post.id %}">View Details</a>
+
+            <div class="edit_details_links">
+              <a href="{% url 'details' post.id %}">See more</a>
+              <!-- <a href="{% url 'edit_post' post.id %}">Edit post</a> -->
+            </div>
             </div>
         </div>
         {% endfor %}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logged Out</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      text-align: center;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    a {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    a:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>You've been logged out</h2>
+    <p>Thanks for visiting. Come back soon!</p>
+    <a href="{% url 'login' %}">Login again</a>
+  </div>
+</body>
+</html>

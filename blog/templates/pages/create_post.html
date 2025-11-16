@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Post</title>
     <style>
-        *{
-            /* margin: 0; */
-            /* padding: 0; */
+        * {
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: Arial, sans-serif;
             background: #f4f7fa;
@@ -18,10 +16,11 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
 
         form {
-            background: white;
+            background: #fff;
             padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -31,38 +30,63 @@
         h1 {
             text-align: center;
             color: #333;
+            margin-bottom: 1rem;
         }
 
         input, textarea, select {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 12px;
+            margin-top: 5px;
             border-radius: 8px;
             border: 1px solid #ccc;
+            transition: border-color 0.3s ease;
+            font-size: 15px;
         }
 
-        input {
-            padding: 15px;
-        }
-
-        /* The outline visible when an input is on focus  */
         input:focus, textarea:focus {
             outline: none;
             border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: #007bff;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+            margin-top: 1rem;
         }
 
         button:hover {
             background: #0056b3;
+        }
+
+        /* 🔴 Error message styling */
+        ul.errorlist {
+            list-style: none;
+            margin: 5px 0 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            background: #fdecea;
+            color: #b71c1c;
+            border-left: 5px solid #f44336;
+            font-size: 14px;
+        }
+
+        /* Non-field (global) errors styling */
+        .nonfield {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -70,7 +94,15 @@
     <form action="" method="post">
         {% csrf_token %}
         <h1>Create New Post</h1>
+
+        {% if form.non_field_errors %}
+            <div class="nonfield">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
         {{ form.as_p }}
+
         <button type="submit">Create Post</button>
     </form>
 </body>

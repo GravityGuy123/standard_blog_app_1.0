@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 
 # -----------------------------
@@ -43,8 +44,37 @@ class UserProfile(models.Model):
     birth_date = models.DateTimeField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profiles/', blank=True)
 
+    # Track soft deletion
+    is_deactivated = models.BooleanField(default=False)
+    deactivated_at = models.DateTimeField(null=True, blank=True)
+    deactivated_reason = models.CharField(max_length=300, blank=True)
+
     def __str__(self):
         return f'Profile of {self.user.username}'
+
+    def deactivate(self, reason=''):
+        """
+        Soft delete - deactivate account
+        """
+
+        self.is_deactivated = True
+        self.deactivated_at = timezone.now()
+        self.deactivation_reason = reason
+        self.user.is_active = False
+        self.user.save()
+        self.save()
+
+    def reactivate(self):
+        """
+        Restore deactivated account
+        """
+
+        self.is_deactivated = False
+        self.deactivated_at = None
+        self.deactivation_reason = ''
+        self.user.is_active = True
+        self.user.save()
+        self.save()
 
 
 # -----------------------------

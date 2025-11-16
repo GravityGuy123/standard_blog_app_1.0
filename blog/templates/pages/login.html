@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    form {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #555;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .message {
+      color: #b71c1c;
+      background: #fdecea;
+      padding: 10px;
+      border-left: 5px solid #f44336;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 14px;
+    }
+
+    .forgot-div {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .forgot-div a {
+      color: #007bff;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .forgot-div a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <form method="post">
+    {% csrf_token %}
+    <h1>Login</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'logout' in message.tags or 'login_error' in message.tags %}
+                <div class="message">{{ message }}</div>
+            {% endif %}
+
+            {# Show reactivate link if login_error is for deactivated account #}
+            {% if 'login_error' in message.tags and 'deactivated' in message.extra_tags %}
+                <div class="message">
+                    {{ message }}
+                    <br>
+                    <a href="{% url 'reactivate_account' %}" style="color:#007bff; text-decoration:underline;">
+                        Reactivate Account
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <label>Username:</label>
+    <input type="text" name="username" placeholder="Enter your username" required>
+
+    <label>Password:</label>
+    <input type="password" name="password" placeholder="Enter your password" required>
+
+    <button type="submit">Login</button>
+    <div class="forgot-div">
+      <a href="{% url 'forgot_password' %}">Forgot Password?</a>
+    </div>
+  </form>
+</body>
+</html>

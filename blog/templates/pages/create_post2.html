@@ -47,6 +47,27 @@
         margin-bottom: 1.5rem;
       }
 
+      .error-div {
+        background: #ffeaea;
+        color: #b10000;
+        border: 1px solid #ffb3b3;
+        border-radius: var(--radius);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       .form-group {
         margin-bottom: 1.5rem;
       }
@@ -75,18 +96,10 @@
         box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
       }
 
-      .error-div {
-        background: #ffeaea;
-        color: #b10000;
-        border: 1px solid #ffb3b3;
-        border-radius: var(--radius);
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .errorlist {
-        list-style: none;
-        margin-top: 0.5rem;
+      small {
+        display: block;
+        margin-top: 0.3rem;
+        color: #555;
       }
 
       button {
@@ -139,24 +152,25 @@
   </head>
   <body>
     <div class="container">
+      {% if form.errors %}
+        <div class="error-div">
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+              <strong>{{ error }}</strong>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
       <h1>Create New Blog Post</h1>
 
       <form method="post">
         {% csrf_token %}
-
-        {% if form.errors %}
-          <div class="error-div">
-            <strong>Please correct the following errors:</strong>
-            {{ form.errors }}
-          </div>
-        {% endif %}
+        {{ form.non_field_errors }}
 
         <div class="form-group">
           {{ form.title.label_tag }}
           {{ form.title }}
-          {% if form.title.errors %}
-            {{ form.title.errors }}
-          {% endif %}
           {% if form.title.help_text %}
             <small>{{ form.title.help_text }}</small>
           {% endif %}
@@ -165,9 +179,6 @@
         <div class="form-group">
           {{ form.content.label_tag }}
           {{ form.content }}
-          {% if form.content.errors %}
-            {{ form.content.errors }}
-          {% endif %}
           {% if form.content.help_text %}
             <small>{{ form.content.help_text }}</small>
           {% endif %}

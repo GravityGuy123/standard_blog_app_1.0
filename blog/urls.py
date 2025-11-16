@@ -37,6 +37,17 @@ from .views import (
     update_username,
     last_7_days_posts,
     advanced_search,
+    simple_update,
+    simple_update2,
+    simple_update3,
+    edit_post,
+    login_view,
+    logout_view,
+    hard_delete1,
+    forgot_password,
+    reset_password,
+    deactivate_account,
+    reactivate_account,
 )
 
 urlpatterns = [
@@ -69,8 +80,9 @@ urlpatterns = [
 
     path('week_ago_posts/', last_7_days_posts, name='week_ago_posts'),
 
+
     # --- User Profiles ---
-    path('user/<str:username>/', user_profile, name='user_profile'), # Individual user profile
+    path('user/<str:username>/', user_profile, name='user_profile'),
 
     path('users/', user_list, name='users_list'),
     path('users/<int:user_id>/update_email/', update_user_email, name='update_user_email'),
@@ -86,8 +98,8 @@ urlpatterns = [
     path('create_post_func/', create_post_method1, name='create_post'),
     path('create_post2_func/', create_post_method2, name='create_post2'),
 
-    path('create/', create_post_with_form, name='create_post'),
-    path('create2/', create_post_with_form2, name='create_post2'),
+    path('create/', create_post_with_form2, name='create_post'),
+    path('create2/', create_post_with_form, name='create_post2'),
 
     # with .create()
     path('create_post2/', create_post2, name='create_post3'),
@@ -116,6 +128,41 @@ urlpatterns = [
     # --- User Profile ---
     path('profile/<str:username>/', profile_view, name='profile_view'),
     
+
     # --- Search ---
-    path('search/', advanced_search, name='search_posts')
+    path('search/', advanced_search, name='search_posts'),
+
+
+    # --- Update Posts ---
+    path('simple_update1/', simple_update, name='simple_update1'),
+    path('simple_update2/', simple_update2, name='simple_update2'),
+    path('simple_update3/', simple_update3, name='simple_update3'),
+
+
+    # --- Edit Posts ---
+    path('edit_post/', edit_post, name='edit_post'),
+    path('edit_post/<int:post_id>/', edit_post, name='edit_post'),
+
+    
+    # path('comments/<int:comment_id>/edit/', edit_comment, name='edit_comment'),
+
+
+    # --- Authentication ---
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+
+    
+    # --- Forgot & Rest Password ---
+    path('forgot_password/', forgot_password, name='forgot_password'),
+    path('reset_password<int:user_id>/', reset_password, name='reset_password'),
+
+    
+    # --- Delete Post ---
+    path('post<int:post_id>/delete', hard_delete1, name='hard_delete1'),
+
+    # --- Deactivate Account ---
+    path('deactivate/', deactivate_account, name='deactivate_account'),
+
+    # --- Reactivate Account ---
+    path('reactivate/', reactivate_account, name='reactivate_account'),
 ]

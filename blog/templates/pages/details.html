@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ post.title|truncatewords:10 }}</title>
+    <title>{{ post.title }}</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -32,7 +32,12 @@
             line-height: 1.6;
         }
 
-        a {
+        .edit_or_return_div {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .back-link {
             display: inline-block;
             margin-top: 1rem;
             margin-right: 1rem;
@@ -44,9 +49,24 @@
             transition: 0.3s;
         }
 
-        a:hover {
+        .back-link:hover {
             background: linear-gradient(90deg, #00c6ff, #007bff);
             transform: translateY(-2px);
+        }
+
+        .edit-link, .delete-link {
+            display: inline-block;
+            margin-top: 1rem;
+            margin-right: 1rem;
+            color: #007bff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .edit-link:hover, .delete-link:hover {
+            text-decoration: underline;
         }
 
         .comments-section {
@@ -119,9 +139,34 @@
             outline: none;
             border-color: #007bff;
         }
+
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 1rem;
+        }
+
+        .error {
+            color: #721c24;
+            background: #f8d7da;
+            padding: 10px;
+            border-left: 4px solid #dc3545;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{{ message.tags }}">
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    
     <header>
         <h2>Post Details</h2>
     </header>
@@ -131,7 +176,11 @@
         <p>{{ post.content|linebreaksbr }}</p>
         <p><strong>Author:</strong> {{ post.author }}</p>
 
-        <a href="{% url 'post_list' %}">← Back to Posts</a>
+        <div class="edit_or_return_div">
+            <a href="{% url 'post_list' %}" class="back-link">← Back to Posts</a>
+            <a href="{% url 'edit_post' post.id %}" class="edit-link">Edit Post</a>
+            <a href="{% url 'hard_delete1' post.id %}" class="delete-link">Delete</a>
+        </div>
 
         <!-- Comments Section -->
         <div class="comments-section">

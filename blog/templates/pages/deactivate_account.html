@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deactivate Account</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+      }
+      .warning {
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .info-box {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .form-group {
+        margin: 15px 0;
+      }
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+      .btn-warning {
+        background: #ffc107;
+        color: black;
+      }
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .message-div {
+        color: red;
+        padding: 10px;
+        background: #f8d7da;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+    </style>
+</head>
+<body>
+    <h1>⚠️ Deactivate Account</h1>
+    <div class="warning">
+      <h3>You're about to deactivate your account</h3>
+      <p>Your account: <strong>{{ user.username }}</strong></p>
+    </div>
+    <div class="info-box">
+      <h4>ℹ️ What happens when you deactivate:</h4>
+      <ul>
+        <li>✓ Your profile will be hidden from other users</li>
+        <li>✓ You won't be able to log in</li>
+        <li>✓ Your posts and comments will remain visible</li>
+        <li>✓ You can reactivate anytime within 30 days</li>
+        <li>✓ After 30 days, your account will be permanently deleted</li>
+      </ul>
+    </div>
+    {% if messages %} {% for message in messages %}
+    <div class="message-div">{{ message }}</div>
+    {% endfor %} {% endif %}
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="password">Enter your password to confirm:</label>
+        <input type="password" name="password" id="password" required />
+      </div>
+      <div class="form-group">
+        <label for="reason">Reason for deactivation (optional):</label>
+        <textarea name="reason" id="reason" rows="4" placeholder="Help us improve by telling us why you're leaving..."></textarea>
+      </div>
+      <button type="submit" class="btn-warning">Deactivate My Account</button>
+      <a href="{% url 'profile' %}" class="btn-secondary">Cancel</a>
+    </form>
+</body>
+</html>
