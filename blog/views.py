@@ -177,13 +177,37 @@ def product_details(request, product_id):
 @login_required(login_url="login")
 def post_list(request):
     """
+    Displays all blog posts and a search field for querying title, content, and author.
+    """
+
+    query = request.GET.get('q', '').strip()  # Extract the search term using 'q' as the get parameter name
+    
+    if query:
+        # If user entered something, search for matching posts
+        posts = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(author__username__icontains=query)
+        ).distinct()
+    else:
+        # Otherwise, show all posts
+        posts = Post.objects.all()
+    
+    total = posts.count()
+    context = {'posts': posts, 'total': total, 'query': query}
+    return render(request, 'pages/post_list.html', context)
+
+    
+@login_required(login_url="login")
+def post_list2(request):
+    """
     Displays all blog posts
     """
 
     posts = Post.objects.all() # Get all posts from database
     total = posts.count()
     context = {'posts': posts, 'total': total}
-    return render(request, 'pages/post_list.html', context)
+    return render(request, 'pages/post_list2.html', context)
 
 
 @login_required(login_url="login")

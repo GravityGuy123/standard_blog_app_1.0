@@ -25,6 +25,46 @@
         flex-direction: column;
       }
 
+      /* Search Form */
+      form {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+        gap: 0.5rem;
+      }
+
+      input[type="text"] {
+        padding: 0.6rem 1rem;
+        width: 300px;
+        border: 1px solid #ccc;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+      }
+
+      input[type="text"]:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        outline: none;
+      }
+
+      button {
+        padding: 0.6rem 1.5rem;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+      }
+
       /* Header with gradient and subtle shadow */
       header {
         background: linear-gradient(90deg, #007bff, #00c6ff);
@@ -194,7 +234,7 @@
         }
     </style>
   </head>
-  <body>
+  <>
     {% if messages %}
         {% for message in messages %}
             <div class="{{ message.tags }}">
@@ -219,17 +259,27 @@
 
     <!-- Main content -->
     <main>
-        <div class="post_results">
-          <h1>Posts</h1>
-          {% if total == 0 %}
-            <p>No Post Yet😥</p>
-          
-          {% elif total == 1 %}
-            <p>{{ total }} Post Found</p>
-    
-          {% else %}
-            <p>{{ total }} Posts Found</p>
-          {% endif %}
+      <form method="get">
+        <input
+          type="text"
+          name="q" 
+          placeholder="Search posts..."
+          value="{{ query }}" >
+        <button type="submit">Search</button>
+      </form>
+
+      <div class="post_results search_results">
+        <!-- <h2>Search Results</h2> -->
+        <h1>Posts</h1>
+        {% if total == 0 %}
+          <p>No Post Yet😥</p>
+        
+        {% elif total == 1 %}
+          <p>{{ total }} Post Found</p>
+  
+        {% else %}
+          <p>{{ total }} Posts Found</p>
+        {% endif %}
       </div>
 
       {% if posts %}
@@ -242,7 +292,6 @@
 
             <div class="edit_details_links">
               <a href="{% url 'details' post.id %}">See more</a>
-              <!-- <a href="{% url 'edit_post' post.id %}">Edit post</a> -->
             </div>
             </div>
         </div>
@@ -252,6 +301,7 @@
         <p>No posts available.</p>
       {% endif %}
     </main>
+
 
     <!-- Footer -->
     <footer>
