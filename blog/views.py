@@ -22,7 +22,7 @@ def hello_world(response):
     return HttpResponse('Hello World')
 
 
-@login_required()
+@login_required(login_url="login")
 def home(request):
     """
     Renders the Home Page Template
@@ -768,6 +768,9 @@ def last_7_days_posts(request):
     return render(request, 'pages/last_7_days_posts.html', context)
 
 
+# -------------------------------------------------------
+# ADVANCED SEARCH THROUGH TITLE, CONTENT AND AUTHOR
+# -------------------------------------------------------
 def advanced_search(request):
     """
     Display all posts and a search field for querying title, content, and author.
@@ -849,7 +852,10 @@ def simple_update3(request):
 # will not work
 
 
-@login_required
+# -------------------------------------------------------
+# EDIT POST
+# -------------------------------------------------------
+@login_required(login_url="login")
 def edit_post(request, post_id):
     """
     Edit and update a post from django form
@@ -859,7 +865,7 @@ def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
     if post.author != request.user:
-        messages.error(request, "You don't have permission to delete this post")
+        messages.error(request, "You don't have permission to edit this post")
         return redirect('details', post_id=post_id)
 
     # Step 2: Check if user submitted the form
@@ -897,34 +903,46 @@ def login_view(request):
         password = request.POST.get("password")
 
         try:
-            # Get user by username
+            # Get user by username (raise if not found)
             user = User.objects.get(username=username)
 
-            # Get user profile
-            profile = user.user_profile
+            # Ensure a profile exists for this user (creates if missing)
+            profile, _ = UserProfile.objects.get_or_create(user=user)
 
-            # Check if user is deactivated
+            # If profile is deactivated, tell the user to reactivate
             if profile.is_deactivated:
                 messages.error(request, "Your account is deactivated. Please reactivate first.")
                 return redirect("reactivate_account")
 
-            # Verify password manually (for inactive/deactivated users)
+            # Verify password
             if not user.check_password(password):
                 messages.error(request, "Invalid username or password.", extra_tags="login_error")
                 return redirect("login")
 
-            # Successful login
-            login(request, user)
+            # Make sure the underlying User.is_active is True when profile is active.
+            # (This fixes cases where is_active was not properly restored.)
+            if not user.is_active:
+                user.is_active = True
+                user.save()
+
+            # Try to authenticate (this will also set user's backend if successful)
+            auth_user = authenticate(request, username=username, password=password)
+
+            if auth_user is not None:
+                login(request, auth_user)
+            else:
+                # If authenticate() returned None for some reason (uncommon here),
+                # log the user in directly while specifying a backend so session persists.
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
             messages.success(request, f"Welcome back, {user.username}!")
             return redirect("home")
 
         except User.DoesNotExist:
             messages.error(request, "Invalid username or password.", extra_tags="login_error")
             return redirect("login")
-        except UserProfile.DoesNotExist:
-            messages.error(request, "User profile not found.", extra_tags="login_error")
-            return redirect("login")
 
+    # GET request, render login page
     return render(request, "pages/login.html")
 
 
@@ -1103,3 +1121,4 @@ def reactivate_account(request):
             messages.error(request, 'Account not found.')
 
     return render(request, 'pages/reactivate_account.html')
+

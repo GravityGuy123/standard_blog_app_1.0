@@ -116,8 +116,6 @@ urlpatterns = [
     # --- Comments ---
     path('post/<int:post_id>/comments/', comment, name='post_comment'),
     path('comments/<int:comment_id>/edit/', edit_comment, name='edit_comment'),
-
-
     path('post/<int:post_id>/create_comment/', create_comment, name='create_comment'),
 
 
@@ -142,9 +140,6 @@ urlpatterns = [
     # --- Edit Posts ---
     path('edit_post/', edit_post, name='edit_post'),
     path('edit_post/<int:post_id>/', edit_post, name='edit_post'),
-
-    
-    # path('comments/<int:comment_id>/edit/', edit_comment, name='edit_comment'),
 
 
     # --- Authentication ---
